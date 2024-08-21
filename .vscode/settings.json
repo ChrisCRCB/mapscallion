@@ -4,6 +4,8 @@
     "Colors",
     "geolocator",
     "Housenumber",
+    "lat",
+    "lon",
     "mapscallion",
     "soloud"
   ]

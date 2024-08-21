@@ -40,6 +40,15 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(final BuildContext context) => SimpleScaffold(
         title: 'Location',
+        actions: [
+          ElevatedButton(
+            onPressed: () => setState(() {}),
+            child: const Icon(
+              Icons.refresh,
+              semanticLabel: 'Refresh',
+            ),
+          ),
+        ],
         body: TimedLocationBuilder(
           builder: (final _, final position) {
             if (position == null) {
@@ -59,16 +68,15 @@ class _MainScreenState extends State<MainScreen> {
                   .getNearbyNodes(
                     latitude: position.latitude,
                     longitude: position.longitude,
-                    radius: 100.0,
                   )
                   .then(
                     (final elements) => setState(
                       () => _elements = elements.elements ?? [],
                     ),
                   );
-              return ElementsListView(elements: _elements);
+              return ElementsListView(position: position, elements: _elements);
             }
-            return ElementsListView(elements: _elements);
+            return ElementsListView(position: position, elements: _elements);
           },
           duration: const Duration(seconds: 5),
         ),
