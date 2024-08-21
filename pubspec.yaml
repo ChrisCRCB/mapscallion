@@ -1,0 +1,30 @@
+name: mapscallion
+description: "A mischievous mapping application."
+publish_to: "none" # Remove this line if you wish to publish to pub.dev
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.5.0-323.2.beta
+
+dependencies:
+  backstreets_widgets: ^0.15.0
+  cupertino_icons: ^1.0.8
+  dart_overpass:
+    path: ../dart_overpass
+  flutter:
+    sdk: flutter
+  flutter_soloud: ^2.0.2
+  geolocator: ^13.0.1
+  json_annotation: ^4.9.0
+
+dev_dependencies:
+  build_runner: ^2.4.12
+  flutter_lints: ^4.0.0
+  flutter_test:
+    sdk: flutter
+  json_serializable: ^6.8.0
+
+
+flutter:
+  uses-material-design: true
