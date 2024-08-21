@@ -37,6 +37,7 @@ class TimedLocationBuilderState extends State<TimedLocationBuilder> {
     super.initState();
     _timer = Timer.periodic(widget.duration, (final _) async {
       _position = await Geolocator.getCurrentPosition();
+      setState(() {});
     });
   }
 
