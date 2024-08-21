@@ -73,14 +73,8 @@ class ElementsListView extends StatelessWidget {
                   element.lat!,
                   element.lon!,
                 ) /
-                12)
+                24)
             .floor();
-        final int clockFace;
-        if (direction > 0) {
-          clockFace = 12 - direction;
-        } else {
-          clockFace = direction;
-        }
         final String title;
         final name = tags.name ?? 'Unnamed';
         final addressDetails = [
@@ -101,7 +95,9 @@ class ElementsListView extends StatelessWidget {
           child: ListTile(
             autofocus: autofocus,
             title: Text(title),
-            subtitle: Text("${distance.floor()} m at $clockFace o'clock"),
+            subtitle: Text(
+              "${distance.floor()} m ${direction < 0 ? 'left' : 'right'}",
+            ),
             onTap: () => setClipboardText(
               const JsonEncoder.withIndent('  ').convert(map),
             ),
