@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_soloud/flutter_soloud.dart';
 
+import 'src/screens/ensure_location_builder.dart';
 import 'src/screens/main_screen.dart';
 
 void main() {
@@ -25,7 +26,9 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MainScreen(),
+      home: EnsureLocationBuilder(
+        builder: (final context) => const MainScreen(),
+      ),
     );
   }
 }
