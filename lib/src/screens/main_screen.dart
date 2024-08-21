@@ -12,9 +12,17 @@ import '../widgets/timed_location_builder.dart';
 class MainScreen extends StatefulWidget {
   /// Create an instance.
   const MainScreen({
+    this.searchRadius = 500.0,
+    this.searchDistanceThreshold = 400.0,
     super.key,
   });
 
+  /// The search radius for nearby nodes.
+  final double searchRadius;
+
+  /// How many metres the user must travel before a new node search is
+  /// performed.
+  final double searchDistanceThreshold;
   @override
   State<MainScreen> createState() => _MainScreenState();
 }
@@ -29,6 +37,9 @@ class _MainScreenState extends State<MainScreen> {
   /// The elements which have been loaded.
   List<Element>? _elements;
 
+  /// The last position where nodes were searched.
+  Position? _lastSearchedPosition;
+
   /// Initialise state.
   @override
   void initState() {
@@ -42,7 +53,11 @@ class _MainScreenState extends State<MainScreen> {
         title: 'Location',
         actions: [
           ElevatedButton(
-            onPressed: () => setState(() {}),
+            onPressed: () => setState(() {
+              _elements = [];
+              _lastPosition = null;
+              _lastSearchedPosition = null;
+            }),
             child: const Icon(
               Icons.refresh,
               semanticLabel: 'Refresh',
@@ -62,18 +77,30 @@ class _MainScreenState extends State<MainScreen> {
                       lastPosition.latitude,
                       lastPosition.longitude,
                     ) >=
-                    lastPosition.accuracy) {
+                    position.accuracy) {
               _lastPosition = position;
-              _overpass
-                  .getNearbyNodes(
-                    latitude: position.latitude,
-                    longitude: position.longitude,
-                  )
-                  .then(
-                    (final elements) => setState(
-                      () => _elements = elements.elements ?? [],
-                    ),
-                  );
+              final lastSearchedPosition = _lastSearchedPosition;
+              if (_elements == null ||
+                  lastSearchedPosition == null ||
+                  Geolocator.distanceBetween(
+                        position.latitude,
+                        position.longitude,
+                        lastSearchedPosition.latitude,
+                        lastSearchedPosition.longitude,
+                      ) >=
+                      widget.searchDistanceThreshold) {
+                _overpass
+                    .getNearbyNodes(
+                      latitude: position.latitude,
+                      longitude: position.longitude,
+                      radius: widget.searchRadius,
+                    )
+                    .then(
+                      (final elements) => setState(
+                        () => _elements = elements.elements ?? [],
+                      ),
+                    );
+              }
               return ElementsListView(position: position, elements: _elements);
             }
             return ElementsListView(position: position, elements: _elements);
