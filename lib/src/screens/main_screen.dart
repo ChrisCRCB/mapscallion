@@ -1,9 +1,11 @@
 import 'package:backstreets_widgets/screens.dart';
 import 'package:backstreets_widgets/widgets.dart';
-import 'package:flutter/material.dart';
+import 'package:dart_overpass/dart_overpass.dart';
+import 'package:dio/dio.dart';
+import 'package:flutter/material.dart' hide Element;
 import 'package:geolocator/geolocator.dart';
 
-import '../widgets/position_list_view.dart';
+import '../widgets/elements_list_view.dart';
 import '../widgets/timed_location_builder.dart';
 
 /// The main screen of the application.
@@ -18,8 +20,21 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
+  /// The overpass API to use.
+  late final DartOverpass _overpass;
+
   /// The last position used.
   Position? _lastPosition;
+
+  /// The elements which have been loaded.
+  List<Element>? _elements;
+
+  /// Initialise state.
+  @override
+  void initState() {
+    super.initState();
+    _overpass = DartOverpass(dio: Dio());
+  }
 
   /// Build the widget.
   @override
@@ -27,13 +42,10 @@ class _MainScreenState extends State<MainScreen> {
         title: 'Location',
         body: TimedLocationBuilder(
           builder: (final _, final position) {
-            final lastPosition = _lastPosition;
             if (position == null) {
-              if (lastPosition == null) {
-                return const LoadingWidget();
-              }
-              return PositionListView(position: lastPosition);
+              return const LoadingWidget();
             }
+            final lastPosition = _lastPosition;
             if (lastPosition == null ||
                 Geolocator.distanceBetween(
                       position.latitude,
@@ -42,9 +54,21 @@ class _MainScreenState extends State<MainScreen> {
                       lastPosition.longitude,
                     ) >=
                     lastPosition.accuracy) {
-              return PositionListView(position: position);
+              _lastPosition = position;
+              _overpass
+                  .getNearbyNodes(
+                    latitude: position.latitude,
+                    longitude: position.longitude,
+                    radius: 100.0,
+                  )
+                  .then(
+                    (final elements) => setState(
+                      () => _elements = elements.elements ?? [],
+                    ),
+                  );
+              return ElementsListView(elements: _elements);
             }
-            return PositionListView(position: lastPosition);
+            return ElementsListView(elements: _elements);
           },
           duration: const Duration(seconds: 5),
         ),

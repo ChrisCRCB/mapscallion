@@ -3,6 +3,7 @@
     "bools",
     "Colors",
     "geolocator",
+    "Housenumber",
     "mapscallion",
     "soloud"
   ]

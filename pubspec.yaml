@@ -12,6 +12,7 @@ dependencies:
   cupertino_icons: ^1.0.8
   dart_overpass:
     path: ../dart_overpass
+  dio: ^5.6.0
   flutter:
     sdk: flutter
   flutter_soloud: ^2.0.2
