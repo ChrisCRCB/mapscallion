@@ -18,13 +18,19 @@ class PositionListView extends StatelessWidget {
   Widget build(final BuildContext context) => ListView(
         shrinkWrap: true,
         children: [
-          CopyListTile(
-            title: 'Latitude',
-            subtitle: position.latitude.toString(),
+          Semantics(
+            liveRegion: true,
+            child: CopyListTile(
+              title: 'Latitude',
+              subtitle: position.latitude.toString(),
+            ),
           ),
-          CopyListTile(
-            title: 'Longitude',
-            subtitle: position.longitude.toString(),
+          Semantics(
+            liveRegion: true,
+            child: CopyListTile(
+              title: 'Longitude',
+              subtitle: position.longitude.toString(),
+            ),
           ),
           CopyListTile(
             title: 'Heading',
