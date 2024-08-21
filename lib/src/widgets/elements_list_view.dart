@@ -26,7 +26,10 @@ class ElementsListView extends StatelessWidget {
   Widget build(final BuildContext context) {
     final e = elements;
     if (e == null) {
-      return const LoadingWidget();
+      return const CenterText(
+        text: 'Loading nodes...',
+        autofocus: true,
+      );
     }
     if (e.isEmpty) {
       return const CenterText(
