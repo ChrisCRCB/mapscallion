@@ -1,10 +1,11 @@
-import 'dart:convert';
-
-import 'package:backstreets_widgets/util.dart';
 import 'package:backstreets_widgets/widgets.dart';
 import 'package:dart_overpass/dart_overpass.dart';
 import 'package:flutter/material.dart' hide Element;
 import 'package:geolocator/geolocator.dart';
+import 'package:recase/recase.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+import '../../extensions.dart';
 
 /// A widget for showing map objects.
 class ElementsListView extends StatelessWidget {
@@ -56,25 +57,18 @@ class ElementsListView extends StatelessWidget {
       itemBuilder: (final context, final index) {
         final element = e[index];
         final tags = element.tags!;
-        final tagMap = tags.toJson();
-        final map = tagMap.entries.where((final entry) {
-          final value = entry.value?.toString();
-          return value != null && value.trim().isNotEmpty;
-        });
         final distance = Geolocator.distanceBetween(
           position.latitude,
           position.longitude,
           element.lat!,
           element.lon!,
         );
-        final direction = (Geolocator.bearingBetween(
-                  position.latitude,
-                  position.longitude,
-                  element.lat!,
-                  element.lon!,
-                ) /
-                24)
-            .floor();
+        final direction = Geolocator.bearingBetween(
+          position.latitude,
+          position.longitude,
+          element.lat!,
+          element.lon!,
+        );
         final String title;
         final name = tags.name ?? 'Unnamed';
         final addressDetails = [
@@ -82,25 +76,38 @@ class ElementsListView extends StatelessWidget {
           tags.addrStreet,
           tags.addrPostcode,
         ].whereType<String>();
-        if (tags.amenity != null) {
-          title = '$name ${tags.amenity}';
+        final amenity = tags.amenity;
+        if (amenity != null) {
+          final String amenityString;
+          if (amenity.contains('_')) {
+            amenityString = amenity.titleCase;
+          } else {
+            amenityString = amenity;
+          }
+          title = '$name $amenityString';
         } else if (addressDetails.isNotEmpty) {
           title = addressDetails.join(', ');
         } else {
           title = name;
         }
-        final autofocus = index == 0;
+        final website = tags.website;
+        final autofocus = (index == 0);
         return Semantics(
           liveRegion: autofocus,
           child: ListTile(
             autofocus: autofocus,
-            title: Text(title),
+            title: Text('$title${website == null ? "" : " ($website)"}'),
             subtitle: Text(
-              "${distance.floor()} m ${direction < 0 ? 'left' : 'right'}",
+              '${distance.floor()} m at ${direction.round().clockFace}',
             ),
-            onTap: () => setClipboardText(
-              const JsonEncoder.withIndent('  ').convert(map),
-            ),
+            onTap: () {
+              if (website != null) {
+                final uri = Uri.tryParse(website);
+                if (uri != null) {
+                  launchUrl(uri);
+                }
+              }
+            },
           ),
         );
       },

@@ -3,12 +3,17 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 
+/// The type of a function which updates a position.
+typedef UpdatePosition = void Function(Position position);
+
 /// A widget which builds its [builder] with a location every [duration].
 class TimedLocationBuilder extends StatefulWidget {
   /// Create an instance.
   const TimedLocationBuilder({
     required this.builder,
     required this.duration,
+    required this.onUpdatePosition,
+    this.initialPosition,
     super.key,
   });
 
@@ -17,6 +22,12 @@ class TimedLocationBuilder extends StatefulWidget {
 
   /// How often the widget should be built.
   final Duration duration;
+
+  /// The function to call with new positions.
+  final UpdatePosition onUpdatePosition;
+
+  /// The initial position to use.
+  final Position? initialPosition;
 
   /// Create state for this widget.
   @override
@@ -35,8 +46,11 @@ class TimedLocationBuilderState extends State<TimedLocationBuilder> {
   @override
   void initState() {
     super.initState();
+    _position = widget.initialPosition;
     _timer = Timer.periodic(widget.duration, (final _) async {
-      _position = await Geolocator.getCurrentPosition();
+      final position = await Geolocator.getCurrentPosition();
+      widget.onUpdatePosition(position);
+      _position = position;
       setState(() {});
     });
   }
