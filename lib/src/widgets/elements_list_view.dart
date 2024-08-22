@@ -64,11 +64,12 @@ class ElementsListView extends StatelessWidget {
           element.lon!,
         );
         final direction = Geolocator.bearingBetween(
-          position.latitude,
-          position.longitude,
-          element.lat!,
-          element.lon!,
-        );
+              position.latitude,
+              position.longitude,
+              element.lat!,
+              element.lon!,
+            ) +
+            position.heading;
         final String title;
         final name = tags.name ?? 'Unnamed';
         final addressDetails = [
