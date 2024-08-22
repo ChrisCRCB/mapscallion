@@ -5,6 +5,8 @@ import 'package:geolocator/geolocator.dart';
 import 'package:recase/recase.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../extensions.dart';
+
 /// A widget for showing map objects.
 class ElementsListView extends StatelessWidget {
   /// Create an instance.
@@ -62,13 +64,11 @@ class ElementsListView extends StatelessWidget {
           element.lon!,
         );
         final direction = Geolocator.bearingBetween(
-              position.latitude,
-              position.longitude,
-              element.lat!,
-              element.lon!,
-            ) %
-            360;
-        final clockFace = (direction / 30).round();
+          position.latitude,
+          position.longitude,
+          element.lat!,
+          element.lon!,
+        );
         final String title;
         final name = tags.name ?? 'Unnamed';
         final addressDetails = [
@@ -91,14 +91,14 @@ class ElementsListView extends StatelessWidget {
           title = name;
         }
         final website = tags.website;
-        final autofocus = index == 0;
+        final autofocus = (index == 0);
         return Semantics(
           liveRegion: autofocus,
           child: ListTile(
             autofocus: autofocus,
             title: Text('$title${website == null ? "" : " ($website)"}'),
             subtitle: Text(
-              "${distance.floor()} m at $clockFace  o'clock",
+              '${distance.floor()} m at ${direction.round().clockFace}',
             ),
             onTap: () {
               if (website != null) {

@@ -2,6 +2,8 @@ import 'package:backstreets_widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 
+import '../../extensions.dart';
+
 /// A [ListView] widget which shows [position].
 class PositionListView extends StatelessWidget {
   /// Create an instance.
@@ -21,6 +23,7 @@ class PositionListView extends StatelessWidget {
           Semantics(
             liveRegion: true,
             child: CopyListTile(
+              autofocus: true,
               title: 'Latitude',
               subtitle: position.latitude.toString(),
             ),
@@ -34,7 +37,7 @@ class PositionListView extends StatelessWidget {
           ),
           CopyListTile(
             title: 'Heading',
-            subtitle: position.heading.toString(),
+            subtitle: position.heading.floor().clockFace,
           ),
           CopyListTile(
             title: 'Accuracy',
