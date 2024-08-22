@@ -25,6 +25,7 @@ class _PositionListViewState extends State<PositionListView> {
   late bool _headingLive;
   late bool _speedLive;
   late bool _accuracyLive;
+  late bool _altitudeLive;
 
   /// Initialise state.
   @override
@@ -35,6 +36,7 @@ class _PositionListViewState extends State<PositionListView> {
     _headingLive = false;
     _speedLive = false;
     _accuracyLive = false;
+    _altitudeLive = false;
   }
 
   /// Build the widget.
@@ -76,6 +78,12 @@ class _PositionListViewState extends State<PositionListView> {
           subtitle: '${widget.position.accuracy} m',
           live: _accuracyLive,
           onChanged: (final value) => setState(() => _accuracyLive = value),
+        ),
+        PossiblyLiveListTile(
+          title: 'Altitude',
+          subtitle: widget.position.altitude.round().toString(),
+          live: _altitudeLive,
+          onChanged: (final value) => setState(() => _altitudeLive = value),
         ),
       ],
     );
